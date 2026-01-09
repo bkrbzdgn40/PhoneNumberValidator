@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: telefon-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: phonedb
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - telefon-network
+
+  api:
+    build: ./api
+    container_name: telefon-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=phonedb
+      - DB_USER=root
+      - DB_PASSWORD=root
+    networks:
+      - telefon-network
+  frontend:
+    build: ./frontend
+    container_name: telefon-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - telefon-network
+networks:
+  telefon-network:
+    driver: bridge
+
+volumes:
+  db_data:
