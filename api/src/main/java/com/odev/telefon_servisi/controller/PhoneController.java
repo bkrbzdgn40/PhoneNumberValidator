@@ -20,15 +20,15 @@ public class PhoneController {
 
     @PostMapping("/phone/validate")
     public ResponseEntity<?> validatePhone(@RequestBody Map<String, String> payload) {
-        String phone = payload.get("number");
-        PhoneValidator.ValidationResult result = PhoneValidator.validate(payload.get("phone"));
+        String phone = payload == null ? null : payload.get("number");
+        PhoneValidator.ValidationResult result = PhoneValidator.validate(phone);
         Map<String, Object> response = new HashMap<>();
         response.put("number", phone);
 
         Map<String, Boolean> rules = new HashMap<>();
-        rules.put("hasNonZeroDigits",result.hasNonZeroDigit);
+        rules.put("hasNonZeroDigit",result.hasNonZeroDigit);
         rules.put("sumFirstEqualsLast",result.sumFirstEqualsLast);
-        rules.put("sumOddEqualEven", result.sumOddEqualsEven);
+        rules.put("sumOddEqualsEven", result.sumOddEqualsEven);
 
         response.put("rules", rules);
         response.put("isValid", result.isValid);
