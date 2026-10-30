@@ -71,7 +71,7 @@ Kayıt API'si verileri MySQL'de saklar. Web formu bu yanıtları kullanıcıya g
 
 ### GET /api/phone/count
 
-`000000` ile `999999` arasındaki tüm altı basamaklı değerleri tarar ve kurallara uyanların sayısını döndürür: `50520`. 
+`000000` ile `999999` arasındaki tüm altı basamaklı değerleri tarar ve kurallara uyanların sayısını döndürür: `6699`. 
 
 ## Testler
 
