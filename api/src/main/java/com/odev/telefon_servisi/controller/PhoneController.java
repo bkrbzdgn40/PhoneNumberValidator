@@ -57,9 +57,15 @@ public class PhoneController {
             successResponse.put("data", savedData);
             return ResponseEntity.status(201).body(successResponse);
         }catch (org.springframework.dao.DataIntegrityViolationException e) {
-            return ResponseEntity.status(400).body("Hata: Bu telefon numarası zaten kayıtlı!");
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", "denied");
+            errorResponse.put("message", "Bu telefon numarası zaten kayıtlı!");
+            return ResponseEntity.status(409).body(errorResponse);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Sunucu tarafında beklenmedik bir hata oluştu.");
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", "error");
+            errorResponse.put("message", "Sunucu tarafında beklenmedik bir hata oluştu.");
+            return ResponseEntity.status(500).body(errorResponse);
         }
     }
     @GetMapping("/phone/count")
