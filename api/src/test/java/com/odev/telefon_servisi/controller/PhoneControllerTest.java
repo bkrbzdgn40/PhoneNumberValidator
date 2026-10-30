@@ -1,6 +1,8 @@
 package com.odev.telefon_servisi.controller;
 
 import com.odev.telefon_servisi.repository.RegistrationRepository;
+import com.odev.telefon_servisi.model.Registration;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -8,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,4 +55,17 @@ class PhoneControllerTest {
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.isValid").value(false));
     }
+    @Test
+    void duplicateRegistrationReturnsConflictWithReadableError() throws Exception {
+        when(registrationRepository.save(any(Registration.class)))
+            .thenThrow(new DataIntegrityViolationException("duplicate"));
+
+        mvc.perform(post("/api/registration")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Example\",\"email\":\"example@test.local\",\"phone\":\"123321\"}"))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.status").value("denied"))
+            .andExpect(jsonPath("$.message").value("Bu telefon numarası zaten kayıtlı!"));
+    }
+
 }
